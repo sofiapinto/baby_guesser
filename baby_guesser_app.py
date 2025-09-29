@@ -139,7 +139,7 @@ with col2:
     # Load existing guesses
     all_guesses = load_guesses()
 
-    refresh_data_button = st.button("Get newest data")
+    refresh_data_button = st.button("Click to get newest data!")
     if refresh_data_button:
         all_guesses = load_guesses()
 
@@ -179,6 +179,7 @@ with col2:
             # Display with matplotlib
             fig, ax = plt.subplots(figsize=(10, 5))
             ax.imshow(wordcloud, interpolation="bilinear")
+            ax.set_title("Baby name guesses", fontsize=20, fontweight="bold", pad=20)
             ax.axis("off")
 
             st.pyplot(fig, use_container_width=True)
@@ -192,7 +193,7 @@ with col2:
         ).encode(
             x=alt.X('weight:Q', title='Guessed Weight (lbs)', scale=alt.Scale(domain=[MIN_WEIGHT, MAX_WEIGHT])),
             y=alt.Y('jitter:Q', title=None, axis=None),
-            color=alt.Color('arrival:N', scale=color_scheme, legend=alt.Legend(title="Arrival Guess")),
+            color=alt.Color('arrival:N', scale=color_scheme, legend=alt.Legend(title="Arrival time guess")),
             tooltip=[
                 alt.Tooltip('guesserName', title='Guesser'),
                 alt.Tooltip('babyName', title='Baby Name Guess'),
@@ -216,7 +217,14 @@ with col2:
         )
 
         # Combine the charts
-        chart = (points + text).interactive()
+        chart = (points + text).properties(
+            title=alt.TitleParams(
+            text="Baby weight and arrival time guesses",
+            fontSize=30,    # bigger size
+            anchor="middle", # center title
+            color="black"
+    )
+        ).interactive()
         
         st.altair_chart(chart, use_container_width=True)
         
