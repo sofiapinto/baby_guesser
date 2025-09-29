@@ -106,22 +106,22 @@ with col1:
     st.markdown("Let's celebrate our amazing colleague Liz! Add as many guesses as you wish for the new arrival below.")
 
     with st.form("guess_form", clear_on_submit=True):
-        guesser_name = st.text_input("Your Name", placeholder="e.g., Seth")
-        baby_name_guess = st.text_input("Guessed the baby name", placeholder="e.g., Alex")
+        guesser_name = st.text_input("Your name", placeholder="e.g., Seth")
+        baby_name_guess = st.text_input("Guess the baby name", placeholder="e.g., Alex")
         weight_guess = st.slider(
-            "Guessed Weight (lbs)",
+            "Guess the weight (lbs)",
             min_value=MIN_WEIGHT,
             max_value=MAX_WEIGHT,
             value=DEFAULT_WEIGHT,
             step=0.1
         )
         arrival_guess = st.radio(
-            "Arrival Time",
+            "Arrival time",
             ["Early", "On-time", "Late"],
             horizontal=True
         )
         
-        submitted = st.form_submit_button("Submit My Guess!")
+        submitted = st.form_submit_button("Submit my guess!")
 
         if submitted:
             if not guesser_name or not baby_name_guess:
@@ -138,7 +138,7 @@ with col1:
 
 # Visualising guesses
 with col2:
-    st.header("Guesses so far")
+    st.header("Guesses from everyone so far")
     # Load existing guesses
     all_guesses = load_guesses()
 
