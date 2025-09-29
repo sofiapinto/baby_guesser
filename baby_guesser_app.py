@@ -113,7 +113,7 @@ with col1:
             min_value=MIN_WEIGHT,
             max_value=MAX_WEIGHT,
             value=DEFAULT_WEIGHT,
-            step=0.1
+            step=0.5
         )
         arrival_guess = st.radio(
             "Arrival time",
@@ -193,7 +193,7 @@ with col2:
         df['stack'] = df['stack'] * stack_spacing
 
         points = alt.Chart(df).mark_circle(size=1000, opacity=0.8).encode(
-            x=alt.X('weight:Q', title='Guessed Weight (lbs)', scale=alt.Scale(domain=[MIN_WEIGHT-0.1, MAX_WEIGHT+0.1])),
+            x=alt.X('weight:Q', title='Guessed Weight (lbs)', scale=alt.Scale(domain=[MIN_WEIGHT-0.5, MAX_WEIGHT+0.5])),
             y=alt.Y('stack:Q', title=None, axis=None, scale =alt.Scale(domain=[df['stack'].min()-stack_spacing, df['stack'].max()+stack_spacing])), 
             color=alt.Color('arrival:N', scale=color_scheme, legend=alt.Legend(title="Arrival time guess")),
             tooltip=[
