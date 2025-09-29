@@ -93,8 +93,9 @@ st.set_page_config(
 )
 
 # --- Header ---
-st.title("🧸💖 Liz's Baby Shower Guessing Game")
-st.markdown("### Let's celebrate our amazing colleague Liz! Add as many guesses as you wish for the new arrival below.")
+st.title("🧸 Liz's baby shower guessing game 🧸")
+st.markdown("## 💖 We will miss you Liz! Wishing you all the best on this exciting journey into parenthood. 💖")
+
 
 # --- Layout (Form on the left, Chart on the right) ---
 col1, col2 = st.columns([1, 2])
@@ -102,6 +103,8 @@ col1, col2 = st.columns([1, 2])
 # --- Input Form ---
 with col1:
     st.header("Your guess")
+    st.markdown("Let's celebrate our amazing colleague Liz! Add as many guesses as you wish for the new arrival below.")
+
     with st.form("guess_form", clear_on_submit=True):
         guesser_name = st.text_input("Your Name", placeholder="e.g., Seth")
         baby_name_guess = st.text_input("Guessed the baby name", placeholder="e.g., Alex")
