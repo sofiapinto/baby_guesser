@@ -79,6 +79,26 @@ def save_guesses(user_id, new_guesses):
         ContentType="application/json"
     )
 
+
+def get_stats(guesses):
+    output = ""
+    name_counts = Counter(guess["babyName"].strip().lower() for guess in guesses)
+    most_common_name = name_counts.most_common(1)[0]
+
+    if most_common_name[1] < 2:
+        output = "Looking at the data... No clear favorite baby name yet! "
+    else:
+        output = f"The most popular baby name so far is: '{most_common_name[0].title()}'. "
+
+    arrival_counts = Counter(guess["arrival"] for guess in guesses)
+    most_common_arrival = arrival_counts.most_common(1)[0]
+
+    if most_common_arrival[1] < 2:
+        output += "Looking at the data... No clear favorite arrival time yet!"
+    else:
+        output += f"The most popular arrival time so far is '{most_common_arrival[0]}'."
+    return output
+
 # --- Main App ---
 
 # Page Configuration
@@ -132,22 +152,6 @@ with col1:
                 save_guesses(guesser_name, [new_guess])
                 st.success("Your guess has been submitted! 🎉")
 
-def most_common_baby_name(guesses):
-    name_counts = Counter(guess["babyName"].strip().lower() for guess in guesses)
-    most_common = name_counts.most_common(1)[0]
-
-    if most_common[1] < 2:
-        return "Looking at the data... No clear favorite baby name yet!"
-    return f"The most popular baby name so far is: '{most_common[0].title()}'."
-
-def most_common_arrival(guesses):
-    arrival_counts = Counter(guess["arrival"] for guess in guesses)
-    most_common = arrival_counts.most_common(1)[0]
-
-    if most_common[1] < 2:
-        return "Looking at the data... No clear favorite arrival time yet!"
-    return f"The most popular arrival time so far is '{most_common[0]}'."
-
 # Visualising guesses
 with col2:
     st.header("Guesses from everyone so far")
@@ -164,8 +168,7 @@ with col2:
         # Convert to DataFrame for plotting
         df = pd.DataFrame(all_guesses)
 
-        st.write(most_common_baby_name(all_guesses))
-        st.write(most_common_arrival(all_guesses))
+        st.write(get_stats(all_guesses))
         st.write("The average guessed weight is: " + str(round(np.mean(df["weight"]), 1)) + " lbs")
         st.markdown("---")
 
