@@ -8,7 +8,23 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 import boto3
 from collections import Counter
+from PIL import Image
 
+PASTEL_COLORS_DARKER = [
+    "#E67C7C",  # deeper pastel pink
+    "#7FB3D5",  # deeper pastel blue
+    "#82B366",  # deeper pastel green
+    "#E6A97B",  # deeper pastel peach
+    "#A999D8",  # deeper pastel lavender
+]
+
+# Custom color function
+class SimplePastelColorFunc(object):
+    def __init__(self, colors):
+        self.colors = colors
+
+    def __call__(self, word, font_size, position, orientation, random_state=None, **kwargs):
+        return np.random.choice(self.colors)
 
 s3 = boto3.client("s3")
 BUCKET = "bb-guesser-app"
@@ -68,8 +84,8 @@ def save_guesses(user_id, new_guesses):
 
 # Page Configuration
 st.set_page_config(
-    page_title="Liz's Baby Shower Guessing Game",
-    page_icon="👶",
+    page_title="Liz's baby shower guessing game",
+    page_icon="🧸",
     layout="wide"
 )
 
@@ -153,6 +169,9 @@ with col2:
                 background_color="white",
                 colormap="inferno"
             ).generate_from_frequencies(name_counts)
+
+            # Apply pastel colors
+            wordcloud.recolor(color_func=SimplePastelColorFunc(PASTEL_COLORS_DARKER))
 
             # Display with matplotlib
             fig, ax = plt.subplots(figsize=(10, 5))
