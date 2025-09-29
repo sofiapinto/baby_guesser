@@ -9,6 +9,9 @@ import matplotlib.pyplot as plt
 import boto3
 from collections import Counter
 from PIL import Image
+from wordcloud import get_single_color_func
+from botocore import UNSIGNED
+from botocore.client import Config
 
 PASTEL_COLORS_DARKER = [
     "#E67C7C",  # deeper pastel pink
@@ -26,7 +29,7 @@ class SimplePastelColorFunc(object):
     def __call__(self, word, font_size, position, orientation, random_state=None, **kwargs):
         return np.random.choice(self.colors)
 
-s3 = boto3.client("s3")
+s3 = boto3.client("s3", config=Config(signature_version=UNSIGNED))
 BUCKET = "bb-guesser-app"
 
 MIN_WEIGHT = 5.0
