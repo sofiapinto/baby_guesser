@@ -152,10 +152,6 @@ with col2:
         # Convert to DataFrame for plotting
         df = pd.DataFrame(all_guesses)
 
-        # Add a 'jitter' column for better visualization to avoid overlap
-        np.random.seed(42) # for consistent jitter
-        df['jitter'] = np.random.uniform(-0.5, 0.5, size=len(df))
-
         # Color scheme for arrival times
         color_scheme = alt.Scale(
             domain=['Early', 'On-time', 'Late'],
@@ -190,16 +186,18 @@ with col2:
         st.markdown("---")
 
         # Base chart for the points
-        points = alt.Chart(df).mark_circle(
-            size=600,
-            opacity=0.8
-        ).encode(
-            x=alt.X('weight:Q', title='Guessed Weight (lbs)', scale=alt.Scale(domain=[MIN_WEIGHT, MAX_WEIGHT])),
-            y=alt.Y('jitter:Q', title=None, axis=None),
+        df['stack'] = df.groupby('weight').cumcount()
+
+        # Compress vertical spacing by multiplying stack level
+        stack_spacing = 0.05
+        df['stack'] = df['stack'] * stack_spacing
+
+        points = alt.Chart(df).mark_circle(size=1000, opacity=0.8).encode(
+            x=alt.X('weight:Q', title='Guessed Weight (lbs)', scale=alt.Scale(domain=[MIN_WEIGHT-0.1, MAX_WEIGHT+0.1])),
+            y=alt.Y('stack:Q', title=None, axis=None, scale =alt.Scale(domain=[df['stack'].min()-stack_spacing, df['stack'].max()+stack_spacing])), 
             color=alt.Color('arrival:N', scale=color_scheme, legend=alt.Legend(title="Arrival time guess")),
             tooltip=[
-                alt.Tooltip('guesserName', title='Guesser'),
-                alt.Tooltip('babyName', title='Baby Name Guess'),
+                alt.Tooltip('babyName', title='Baby name guess'),
                 alt.Tooltip('weight', title='Weight (lbs)', format=".1f"),
                 alt.Tooltip('arrival', title='Arrival')
             ]
@@ -207,26 +205,24 @@ with col2:
             height=400
         )
 
-        # Text layer for the names inside the circles
         text = alt.Chart(df).mark_text(
             align='center',
             baseline='middle',
             color='white',
-            fontSize=10,
+            fontSize=10
         ).encode(
             x='weight:Q',
-            y='jitter:Q',
+            y='stack:Q',
             text='babyName:N'
         )
 
-        # Combine the charts
         chart = (points + text).properties(
             title=alt.TitleParams(
-            text="Baby weight and arrival time guesses",
-            fontSize=30,    # bigger size
-            anchor="middle", # center title
-            color="black"
-    )
+                text="Baby weight and arrival time guesses",
+                fontSize=30,
+                anchor="middle",
+                color="black"
+            )
         ).interactive()
         
         st.altair_chart(chart, use_container_width=True)
