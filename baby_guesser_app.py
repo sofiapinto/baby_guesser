@@ -12,6 +12,7 @@ from PIL import Image
 from wordcloud import get_single_color_func
 from botocore import UNSIGNED
 from botocore.client import Config
+from itertools import cycle
 
 PASTEL_COLORS_DARKER = [
     "#E67C7C",  # deeper pastel pink
@@ -20,14 +21,7 @@ PASTEL_COLORS_DARKER = [
     "#E6A97B",  # deeper pastel peach
     "#A999D8",  # deeper pastel lavender
 ]
-
-# Custom color function
-class SimplePastelColorFunc(object):
-    def __init__(self, colors):
-        self.colors = colors
-
-    def __call__(self, word, font_size, position, orientation, random_state=None, **kwargs):
-        return np.random.choice(self.colors)
+color_cycle = cycle(PASTEL_COLORS_DARKER)
 
 s3 = boto3.client("s3", config=Config(signature_version=UNSIGNED))
 BUCKET = "bb-guesser-app"
@@ -36,8 +30,10 @@ MIN_WEIGHT = 5.0
 MAX_WEIGHT = 12.0
 DEFAULT_WEIGHT = 8.0
 
-# --- Helper Functions for Data Persistence ---
+# --- Helper Functions ---
 
+def cycling_color_func(word, font_size, position, orientation, random_state=None, **kwargs):
+    return next(color_cycle)
 
 def load_guesses():
     """Reads all user guess JSONs and combines them into one list."""
@@ -173,8 +169,8 @@ with col2:
             ).generate_from_frequencies(name_counts)
 
             # Apply pastel colors
-            wordcloud.recolor(color_func=SimplePastelColorFunc(PASTEL_COLORS_DARKER))
-
+            wordcloud.recolor(color_func=cycling_color_func)
+            
             # Display with matplotlib
             fig, ax = plt.subplots(figsize=(10, 5))
             ax.imshow(wordcloud, interpolation="bilinear")
